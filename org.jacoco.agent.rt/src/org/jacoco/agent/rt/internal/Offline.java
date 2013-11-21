@@ -22,14 +22,7 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public final class Offline {
 
-	private static final RuntimeData DATA;
-	private static final String CONFIG_RESOURCE = "/jacoco-agent.properties";
-
-	static {
-		final Properties config = ConfigLoader.load(CONFIG_RESOURCE,
-				System.getProperties());
-		DATA = Agent.getInstance(new AgentOptions(config)).getData();
-	}
+	private static RuntimeData DATA;
 
 	private Offline() {
 		// no instances
@@ -48,8 +41,20 @@ public final class Offline {
 	 */
 	public static boolean[] getProbes(final long classid,
 			final String classname, final int probecount) {
-		return DATA.getExecutionData(Long.valueOf(classid), classname,
-				probecount).getProbes();
+		try {
+
+			if (DATA == null) {
+
+				final Properties config = new Properties();
+				DATA = Agent.getInstance(new AgentOptions(config)).getData();
+				return new boolean[probecount];
+			}
+
+			return DATA.getExecutionData(Long.valueOf(classid), classname,
+					probecount).getProbes();
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
 	}
 
 }

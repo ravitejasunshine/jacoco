@@ -129,7 +129,7 @@ public class Agent implements IAgent {
 						new ObjectName(JMX_NAME));
 			}
 		} catch (final Exception e) {
-			logger.logExeption(e);
+			//logger.logExeption(e);
 		}
 	}
 
@@ -173,6 +173,10 @@ public class Agent implements IAgent {
 	}
 
 	private String createSessionId() {
+		if (true) {
+			return "foo-" + AbstractRuntime.createRandomId();
+		}
+
 		String host;
 		try {
 			host = InetAddress.getLocalHost().getHostName();

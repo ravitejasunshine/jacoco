@@ -237,7 +237,7 @@ public final class AgentOptions {
 	 * @return output file location
 	 */
 	public String getDestfile() {
-		return getOption(DESTFILE, "jacoco.exec");
+		return getOption(DESTFILE, "/tmp/jacoco.exec");
 	}
 
 	/**

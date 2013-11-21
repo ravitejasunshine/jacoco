@@ -82,7 +82,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Temporary workaround for jira.codehaus.org/browse/MPLUGIN-244 -->
-          <additionalparam>-Xdoclint:none</additionalparam>
+          <!--<additionalparam>-Xdoclint:none</additionalparam>-->
           <tagletArtifacts>
             <tagletArtifact>
               <groupId>org.apache.maven.plugin-tools</groupId>
