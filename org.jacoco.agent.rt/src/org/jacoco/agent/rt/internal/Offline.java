@@ -23,6 +23,7 @@ import org.jacoco.core.runtime.RuntimeData;
 public final class Offline {
 
 	private static RuntimeData DATA;
+	private static boolean reentryBarrier = false;
 
 	private Offline() {
 		// no instances
@@ -42,19 +43,26 @@ public final class Offline {
 	public static boolean[] getProbes(final long classid,
 			final String classname, final int probecount) {
 		try {
+			if (reentryBarrier == false && sun.misc.VM.isBooted()) {
+				reentryBarrier = true;
+				if (DATA == null) {
 
-			if (DATA == null) {
+					final Properties config = new Properties();
+					DATA = Agent.getInstance(new AgentOptions(config))
+							.getData();
+					return new boolean[probecount];
+				}
 
-				final Properties config = new Properties();
-				DATA = Agent.getInstance(new AgentOptions(config)).getData();
-				return new boolean[probecount];
+				final boolean[] result = DATA.getExecutionData(
+						Long.valueOf(classid), classname, probecount)
+						.getProbes();
+				reentryBarrier = false;
+				return result;
 			}
-
-			return DATA.getExecutionData(Long.valueOf(classid), classname,
-					probecount).getProbes();
 		} catch (final Throwable t) {
-			throw new RuntimeException(t);
+			// throw new RuntimeException(t);
 		}
+		return new boolean[probecount];
 	}
 
 }
