@@ -25,6 +25,8 @@ public final class Offline {
 	private static RuntimeData DATA;
 	private static boolean reentryBarrier = false;
 
+	public static boolean enabled = false;
+
 	private Offline() {
 		// no instances
 	}
@@ -42,6 +44,7 @@ public final class Offline {
 	 */
 	public static boolean[] getProbes(final long classid,
 			final String classname, final int probecount) {
+
 		try {
 			if (reentryBarrier == false && sun.misc.VM.isBooted()) {
 				reentryBarrier = true;
@@ -50,17 +53,18 @@ public final class Offline {
 					final Properties config = new Properties();
 					DATA = Agent.getInstance(new AgentOptions(config))
 							.getData();
-					return new boolean[probecount];
 				}
 
 				final boolean[] result = DATA.getExecutionData(
 						Long.valueOf(classid), classname, probecount)
 						.getProbes();
-				reentryBarrier = false;
+
 				return result;
 			}
 		} catch (final Throwable t) {
 			// throw new RuntimeException(t);
+		} finally {
+			reentryBarrier = false;
 		}
 		return new boolean[probecount];
 	}
