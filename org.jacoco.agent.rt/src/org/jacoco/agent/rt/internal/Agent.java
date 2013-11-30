@@ -110,7 +110,7 @@ public class Agent implements IAgent {
 		return data;
 	}
 
-	private static boolean startupBarrier = false;
+	private static boolean startupReentranceFlag = false;
 
 	/**
 	 * Initializes this agent.
@@ -118,8 +118,8 @@ public class Agent implements IAgent {
 	 */
 	public void startup() {
 		try {
-			if (!startupBarrier) {
-				startupBarrier = true;
+			if (!startupReentranceFlag) {
+				startupReentranceFlag = true;
 
 				String sessionId = options.getSessionId();
 				if (sessionId == null) {
@@ -137,19 +137,19 @@ public class Agent implements IAgent {
 		} catch (final Exception e) {
 			logger.logExeption(e);
 		} finally {
-			startupBarrier = false;
+			startupReentranceFlag = false;
 		}
 	}
 
-	private static boolean shutdownBarrier = false;
+	private static boolean shutdownReentranceFlag = false;
 
 	/**
 	 * Shutdown the agent again.
 	 */
 	public void shutdown() {
 		try {
-			if (!shutdownBarrier && output != null) {
-				shutdownBarrier = true;
+			if (!shutdownReentranceFlag && output != null) {
+				shutdownReentranceFlag = true;
 				if (options.getDumpOnExit()) {
 					output.writeExecutionData(false);
 				}
@@ -163,7 +163,7 @@ public class Agent implements IAgent {
 		} catch (final Exception e) {
 			logger.logExeption(e);
 		} finally {
-			shutdownBarrier = false;
+			shutdownReentranceFlag = false;
 		}
 	}
 

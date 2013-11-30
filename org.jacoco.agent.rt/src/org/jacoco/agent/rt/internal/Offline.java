@@ -24,7 +24,7 @@ import org.jacoco.core.runtime.RuntimeData;
 public final class Offline {
 
 	private static RuntimeData DATA;
-	private static boolean reentryBarrier = false;
+	private static boolean reentryFlag = false;
 
 	public static boolean enabled = false;
 
@@ -56,8 +56,8 @@ public final class Offline {
 			final String classname, final int probecount) {
 
 		try {
-			if (reentryBarrier == false && sun.misc.VM.isBooted()) {
-				reentryBarrier = true;
+			if (reentryFlag == false && sun.misc.VM.isBooted()) {
+				reentryFlag = true;
 				if (DATA == null) {
 					final Properties config = ConfigLoader.load(
 							CONFIG_RESOURCE, System.getProperties());
@@ -77,7 +77,7 @@ public final class Offline {
 		} catch (final Throwable t) {
 			// throw new RuntimeException(t);
 		} finally {
-			reentryBarrier = false;
+			reentryFlag = false;
 		}
 
 		return createTempArray(classid, classname, probecount);

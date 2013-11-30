@@ -40,12 +40,6 @@ public final class PreMain {
 	public static void premain(final String options, final Instrumentation inst)
 			throws Exception {
 
-		// System.err.println("ENABLING");
-		// Offline.enabled = true;
-		// if (true) {
-		// return;
-		// }
-
 		final AgentOptions agentOptions = new AgentOptions(options);
 
 		final Agent agent = Agent.getInstance(agentOptions);
