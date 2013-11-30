@@ -21,7 +21,7 @@ if ( file.isFile() ) {
     throw new RuntimeException( "Excluded file should not be instrumented: " + file );
 }
 
-file = new File( "/tmp/jacoco.exec" );
+file = new File( basedir, "child/target/coverage.exec" );
 if ( !file.isFile() )
 {
     throw new FileNotFoundException( "Could not find generated dump: " + file );

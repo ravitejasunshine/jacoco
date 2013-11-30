@@ -35,6 +35,8 @@ public final class Offline {
 	private static boolean[][] coverageArrays = new boolean[MAX_CLASSES][];
 	private static int nextIndex = 0;
 
+	private static final String CONFIG_RESOURCE = "/jacoco-agent.properties";
+
 	private Offline() {
 		// no instances
 	}
@@ -57,8 +59,9 @@ public final class Offline {
 			if (reentryBarrier == false && sun.misc.VM.isBooted()) {
 				reentryBarrier = true;
 				if (DATA == null) {
+					final Properties config = ConfigLoader.load(
+							CONFIG_RESOURCE, System.getProperties());
 
-					final Properties config = new Properties();
 					DATA = Agent.getInstance(new AgentOptions(config))
 							.getData();
 

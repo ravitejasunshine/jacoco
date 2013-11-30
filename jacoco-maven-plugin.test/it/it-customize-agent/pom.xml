@@ -23,7 +23,7 @@
 
   <properties>
     <jacoco.propertyName>coverageAgent</jacoco.propertyName>
-    <jacoco.destFile>/tmp/jacoco.exec</jacoco.destFile>
+    <jacoco.destFile>${project.build.directory}/coverage.exec</jacoco.destFile>
     <jacoco.append>false</jacoco.append>
     <jacoco.exclClassLoaders>sun.reflect.DelegatingClassLoader:MyClassLoader</jacoco.exclClassLoaders>
     <jacoco.sessionId>session</jacoco.sessionId>

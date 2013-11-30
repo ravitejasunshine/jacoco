@@ -148,7 +148,7 @@ public class Agent implements IAgent {
 	 */
 	public void shutdown() {
 		try {
-			if (!shutdownBarrier) {
+			if (!shutdownBarrier && output != null) {
 				shutdownBarrier = true;
 				if (options.getDumpOnExit()) {
 					output.writeExecutionData(false);
