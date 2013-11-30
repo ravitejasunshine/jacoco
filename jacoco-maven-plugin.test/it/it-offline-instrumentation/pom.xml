@@ -67,7 +67,7 @@
               <goal>report</goal>
             </goals>
             <configuration>
-              <dataFile>${project.build.directory}/coverage.exec</dataFile>
+              <dataFile>/tmp/jacoco.exec</dataFile>
             </configuration>
           </execution>
         </executions>
@@ -77,7 +77,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <jacoco-agent.destfile>${project.build.directory}/coverage.exec</jacoco-agent.destfile>
+            <jacoco-agent.destfile>/tmp/jacoco.exec</jacoco-agent.destfile>
           </systemPropertyVariables>
         </configuration>
       </plugin>
