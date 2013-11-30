@@ -13,6 +13,7 @@ package org.jacoco.agent.rt.internal;
 
 import java.util.Properties;
 
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.runtime.AgentOptions;
 import org.jacoco.core.runtime.RuntimeData;
 
@@ -26,6 +27,13 @@ public final class Offline {
 	private static boolean reentryBarrier = false;
 
 	public static boolean enabled = false;
+
+	private static int MAX_CLASSES = 100000;
+
+	private static long ids[] = new long[MAX_CLASSES];
+	private static String classNames[] = new String[MAX_CLASSES];
+	private static boolean[][] coverageArrays = new boolean[MAX_CLASSES][];
+	private static int nextIndex = 0;
 
 	private Offline() {
 		// no instances
@@ -53,6 +61,8 @@ public final class Offline {
 					final Properties config = new Properties();
 					DATA = Agent.getInstance(new AgentOptions(config))
 							.getData();
+
+					storeCachedArrays();
 				}
 
 				final boolean[] result = DATA.getExecutionData(
@@ -66,7 +76,40 @@ public final class Offline {
 		} finally {
 			reentryBarrier = false;
 		}
-		return new boolean[probecount];
+
+		return createTempArray(classid, classname, probecount);
 	}
 
+	private static void storeCachedArrays() {
+
+		for (int i = 0; i < nextIndex; i++) {
+			final long id = ids[i];
+			final String className = classNames[i];
+			final boolean[] probes = coverageArrays[i];
+
+			final ExecutionData executionData = new ExecutionData(id,
+					className, probes);
+			DATA.putExecutionData(executionData);
+		}
+
+	}
+
+	private static boolean[] createTempArray(final long classid,
+			final String classname, final int probecount) {
+
+		for (int index = 0; index < nextIndex; index++) {
+			if (ids[index] == classid) {
+				return coverageArrays[index];
+			}
+		}
+
+		ids[nextIndex] = classid;
+		classNames[nextIndex] = classname;
+
+		final boolean[] tempArray = new boolean[probecount];
+		coverageArrays[nextIndex] = tempArray;
+
+		nextIndex++;
+		return tempArray;
+	}
 }

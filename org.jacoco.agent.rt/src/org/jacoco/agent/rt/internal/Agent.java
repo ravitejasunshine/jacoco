@@ -110,44 +110,60 @@ public class Agent implements IAgent {
 		return data;
 	}
 
+	private static boolean startupBarrier = false;
+
 	/**
 	 * Initializes this agent.
 	 * 
 	 */
 	public void startup() {
 		try {
-			String sessionId = options.getSessionId();
-			if (sessionId == null) {
-				sessionId = createSessionId();
-			}
-			data.setSessionId(sessionId);
-			output = createAgentOutput();
-			output.startup(options, data);
-			if (options.getJmx()) {
-				ManagementFactory.getPlatformMBeanServer().registerMBean(
-						new StandardMBean(this, IAgent.class),
-						new ObjectName(JMX_NAME));
+			if (!startupBarrier) {
+				startupBarrier = true;
+
+				String sessionId = options.getSessionId();
+				if (sessionId == null) {
+					sessionId = createSessionId();
+				}
+				data.setSessionId(sessionId);
+				output = createAgentOutput();
+				output.startup(options, data);
+				if (options.getJmx()) {
+					ManagementFactory.getPlatformMBeanServer().registerMBean(
+							new StandardMBean(this, IAgent.class),
+							new ObjectName(JMX_NAME));
+				}
 			}
 		} catch (final Exception e) {
 			logger.logExeption(e);
+		} finally {
+			startupBarrier = false;
 		}
 	}
+
+	private static boolean shutdownBarrier = false;
 
 	/**
 	 * Shutdown the agent again.
 	 */
 	public void shutdown() {
 		try {
-			if (options.getDumpOnExit()) {
-				output.writeExecutionData(false);
-			}
-			output.shutdown();
-			if (options.getJmx()) {
-				ManagementFactory.getPlatformMBeanServer().unregisterMBean(
-						new ObjectName(JMX_NAME));
+			if (!shutdownBarrier) {
+				shutdownBarrier = true;
+				if (options.getDumpOnExit()) {
+					output.writeExecutionData(false);
+				}
+				output.shutdown();
+				if (options.getJmx()) {
+					ManagementFactory.getPlatformMBeanServer().unregisterMBean(
+							new ObjectName(JMX_NAME));
+				}
+
 			}
 		} catch (final Exception e) {
 			logger.logExeption(e);
+		} finally {
+			shutdownBarrier = false;
 		}
 	}
 

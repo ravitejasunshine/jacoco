@@ -119,6 +119,13 @@ public final class ExecutionDataStore implements IExecutionDataVisitor {
 		return entry;
 	}
 
+	public ExecutionData put(final long id, final String className,
+			final boolean[] probes) {
+		final ExecutionData entry = new ExecutionData(id, className, probes);
+		entries.put(id, entry);
+		return entry;
+	}
+
 	/**
 	 * Resets all execution data probes, i.e. marks them as not executed. The
 	 * execution data objects itself are not removed.

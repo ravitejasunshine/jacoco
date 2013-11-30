@@ -121,6 +121,12 @@ public class RuntimeData {
 		}
 	}
 
+	public void putExecutionData(final ExecutionData executionData) {
+		synchronized (store) {
+			store.put(executionData);
+		}
+	}
+
 	/**
 	 * Retrieves the execution probe array for a given class. The passed
 	 * {@link Object} array instance is used for parameters and the return value
