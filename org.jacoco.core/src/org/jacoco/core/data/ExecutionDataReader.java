@@ -78,13 +78,19 @@ public class ExecutionDataReader {
 	public boolean read() throws IOException {
 		try {
 			byte type;
+			boolean done = false;
 			do {
 				type = in.readByte();
 				if (firstBlock && type != ExecutionDataWriter.BLOCK_HEADER) {
 					throw new IOException("Invalid execution data file.");
 				}
 				firstBlock = false;
-			} while (readBlock(type));
+				try {
+					done = readBlock(type);
+				} catch (final Exception e) {
+					System.err.println(e.getMessage());
+				}
+			} while (done);
 			return true;
 		} catch (final EOFException e) {
 			return false;

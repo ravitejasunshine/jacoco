@@ -284,7 +284,7 @@ public class MethodAnalyzer extends MethodProbesVisitor {
 
 	private void addProbe(final int probeId) {
 		lastInsn.addBranch();
-		if (probes != null && probes[probeId]) {
+		if (probes != null && probeId < probes.length && probes[probeId]) {
 			coveredProbes.add(lastInsn);
 		}
 	}
