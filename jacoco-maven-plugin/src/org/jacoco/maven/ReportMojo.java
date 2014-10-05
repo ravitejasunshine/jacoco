@@ -12,13 +12,7 @@
 package org.jacoco.maven;
 
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
-
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.project.MavenProject;
-import org.jacoco.core.data.ExecutionDataStore;
-import org.jacoco.core.data.SessionInfoStore;
 
 /**
  * Creates a code coverage report for tests of a single project in multiple
@@ -48,28 +42,11 @@ public class ReportMojo extends AbstractReportMojo {
      *
      * @parameter default-value="${project.build.directory}/jacoco.exec"
      */
-    protected File dataFile;
+    private File dataFile;
 
     @Override
     protected String getOutputDirectory() {
         return outputDirectory.getAbsolutePath();
-    }
-
-    @Override
-    protected MavenProject getProject() {
-        return project;
-    }
-
-    @Override
-    protected Renderer getSiteRenderer() {
-        return siteRenderer;
-    }
-
-    /**
-     * @param dataFile
-     */
-    protected void setDataFile(final File dataFile) {
-        this.dataFile = dataFile;
     }
 
     @Override
@@ -99,7 +76,6 @@ public class ReportMojo extends AbstractReportMojo {
 
     @Override
     public String getName(final Locale locale) {
-        return "JaCoCo";
+        return "JaCoCo Test";
     }
-
 }
