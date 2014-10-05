@@ -74,13 +74,6 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 	 */
 	List<String> excludes;
 	/**
-	 * A list of class folders in addition to the current projects class folder
-	 * to be scanned for class files.
-	 * 
-	 * @parameter
-	 */
-	private List<String> classFolders;
-	/**
 	 * Flag used to suppress execution.
 	 * 
 	 * @parameter property="jacoco.skip" default-value="false"
@@ -223,15 +216,7 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 		final BundleCreator creator = new BundleCreator(this.getProject(),
 				fileFilter, getLog());
 
-		final List<File> classFoldersList = new ArrayList<File>();
-		if (classFolders != null) {
-			for (final String folder : classFolders) {
-				classFoldersList.add(new File(folder));
-			}
-		}
-
-		final IBundleCoverage bundle = creator.createBundle(executionDataStore,
-				classFoldersList);
+		final IBundleCoverage bundle = creator.createBundle(executionDataStore, null);
 		final SourceFileCollection locator = new SourceFileCollection(
 				getCompileSourceRoots(), sourceEncoding);
 		checkForMissingDebugInformation(bundle);
@@ -318,13 +303,5 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 	abstract File getDataFile();
 
 	abstract File getOutputDirectoryFile();
-
-	public List<String> getClassFolders() {
-		return classFolders;
-	}
-
-	public void setClassFolders(final List<String> classFolders) {
-		this.classFolders = classFolders;
-	}
 
 }
