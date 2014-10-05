@@ -86,11 +86,6 @@ public class ReportAggregateMojo extends ReportMojo {
 		concatenateExecFiles();
 		setDataFile(destFile);
 
-		List<String> sourceFolders = super.getSourceFolders();
-		if (sourceFolders == null) {
-			sourceFolders = new ArrayList<String>();
-		}
-
 		List<String> classFolders = super.getClassFolders();
 		if (classFolders == null) {
 			classFolders = new ArrayList<String>();
@@ -98,12 +93,10 @@ public class ReportAggregateMojo extends ReportMojo {
 
 		for (final MavenProject reactor : reactorProjects) {
 			if (reactor != getProject()) {
-				sourceFolders.addAll(reactor.getCompileSourceRoots());
 				classFolders.add(reactor.getBuild().getOutputDirectory());
 			}
 		}
 
-		setSourceFolders(sourceFolders);
 		setClassFolders(classFolders);
 		super.executeReport(locale);
 	}

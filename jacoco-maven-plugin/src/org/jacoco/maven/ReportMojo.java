@@ -23,7 +23,7 @@ import org.jacoco.core.data.SessionInfoStore;
 /**
  * Creates a code coverage report for tests of a single project in multiple
  * formats (HTML, XML, and CSV).
- * 
+ *
  * @phase verify
  * @goal report
  * @requiresProject true
@@ -32,119 +32,74 @@ import org.jacoco.core.data.SessionInfoStore;
  */
 public class ReportMojo extends AbstractReportMojo {
 
-	/**
-	 * Output directory for the reports. Note that this parameter is only
-	 * relevant if the goal is run from the command line or from the default
-	 * build lifecycle. If the goal is run indirectly as part of a site
-	 * generation, the output directory configured in the Maven Site Plugin is
-	 * used instead.
-	 * 
-	 * @parameter default-value="${project.reporting.outputDirectory}/jacoco"
-	 */
-	private File outputDirectory;
+    /**
+     * Output directory for the reports. Note that this parameter is only
+     * relevant if the goal is run from the command line or from the default
+     * build lifecycle. If the goal is run indirectly as part of a site
+     * generation, the output directory configured in the Maven Site Plugin is
+     * used instead.
+     *
+     * @parameter default-value="${project.reporting.outputDirectory}/jacoco"
+     */
+    private File outputDirectory;
 
-	/**
-	 * File with execution data.
-	 * 
-	 * @parameter default-value="${project.build.directory}/jacoco.exec"
-	 */
-	protected File dataFile;
+    /**
+     * File with execution data.
+     *
+     * @parameter default-value="${project.build.directory}/jacoco.exec"
+     */
+    protected File dataFile;
 
-	/**
-	 * Maven project.
-	 * 
-	 * @parameter expression="${project}"
-	 * @readonly
-	 */
-	private MavenProject project;
+    @Override
+    protected String getOutputDirectory() {
+        return outputDirectory.getAbsolutePath();
+    }
 
-	/**
-	 * Doxia Site Renderer.
-	 * 
-	 * @component
-	 */
-	private Renderer siteRenderer;
+    @Override
+    protected MavenProject getProject() {
+        return project;
+    }
 
-	/**
-	 * A list of source folders in addition to the current projects source
-	 * folder to be scanned for source files.
-	 * 
-	 * @parameter
-	 */
-	private List<String> sourceFolders;
+    @Override
+    protected Renderer getSiteRenderer() {
+        return siteRenderer;
+    }
 
-	private SessionInfoStore sessionInfoStore;
+    /**
+     * @param dataFile
+     */
+    protected void setDataFile(final File dataFile) {
+        this.dataFile = dataFile;
+    }
 
-	private ExecutionDataStore executionDataStore;
+    @Override
+    public void setReportOutputDirectory(final File reportOutputDirectory) {
+        if (reportOutputDirectory != null
+                && !reportOutputDirectory.getAbsolutePath().endsWith("jacoco")) {
+            outputDirectory = new File(reportOutputDirectory, "jacoco");
+        } else {
+            outputDirectory = reportOutputDirectory;
+        }
+    }
 
-	@Override
-	public String getOutputName() {
-		return "jacoco/index";
-	}
+    @Override
+    File getDataFile() {
+        return dataFile;
+    }
 
-	@Override
-	public String getName(final Locale locale) {
-		return "JaCoCo";
-	}
+    @Override
+    File getOutputDirectoryFile() {
+        return outputDirectory;
+    }
 
-	@Override
-	public String getDescription(final Locale locale) {
-		return "JaCoCo Test Coverage Report.";
-	}
+    @Override
+    public String getOutputName() {
+        return "jacoco/index";
+    }
 
-	@Override
-	public boolean isExternalReport() {
-		return true;
-	}
-
-	@Override
-	protected String getOutputDirectory() {
-		return outputDirectory.getAbsolutePath();
-	}
-
-	@Override
-	protected MavenProject getProject() {
-		return project;
-	}
-
-	@Override
-	protected Renderer getSiteRenderer() {
-		return siteRenderer;
-	}
-
-	/**
-	 * @param dataFile
-	 */
-	protected void setDataFile(final File dataFile) {
-		this.dataFile = dataFile;
-	}
-
-	@Override
-	public void setReportOutputDirectory(final File reportOutputDirectory) {
-		if (reportOutputDirectory != null
-				&& !reportOutputDirectory.getAbsolutePath().endsWith("jacoco")) {
-			outputDirectory = new File(reportOutputDirectory, "jacoco");
-		} else {
-			outputDirectory = reportOutputDirectory;
-		}
-	}
-
-	@Override
-	File getDataFile() {
-		return dataFile;
-	}
-
-	@Override
-	File getOutputDirectoryFile() {
-		return outputDirectory;
-	}
-
-	public List<String> getSourceFolders() {
-		return sourceFolders;
-	}
-
-	public void setSourceFolders(final List<String> sourceFolders) {
-		this.sourceFolders = sourceFolders;
-	}
+    @Override
+    public String getName(final Locale locale) {
+        return "JaCoCo";
+    }
 
 }
