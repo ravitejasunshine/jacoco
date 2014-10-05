@@ -17,7 +17,7 @@ import java.util.Locale;
 /**
  * Creates a code coverage report for tests of a single project in multiple
  * formats (HTML, XML, and CSV).
- *
+ * 
  * @phase verify
  * @goal report
  * @requiresProject true
@@ -26,56 +26,56 @@ import java.util.Locale;
  */
 public class ReportMojo extends AbstractReportMojo {
 
-    /**
-     * Output directory for the reports. Note that this parameter is only
-     * relevant if the goal is run from the command line or from the default
-     * build lifecycle. If the goal is run indirectly as part of a site
-     * generation, the output directory configured in the Maven Site Plugin is
-     * used instead.
-     *
-     * @parameter default-value="${project.reporting.outputDirectory}/jacoco"
-     */
-    private File outputDirectory;
+        /**
+         * Output directory for the reports. Note that this parameter is only
+         * relevant if the goal is run from the command line or from the default
+         * build lifecycle. If the goal is run indirectly as part of a site
+         * generation, the output directory configured in the Maven Site Plugin is
+         * used instead.
+         * 
+         * @parameter default-value="${project.reporting.outputDirectory}/jacoco"
+         */
+        private File outputDirectory;
 
-    /**
-     * File with execution data.
-     *
-     * @parameter default-value="${project.build.directory}/jacoco.exec"
-     */
-    private File dataFile;
+        /**
+         * File with execution data.
+         * 
+         * @parameter default-value="${project.build.directory}/jacoco.exec"
+         */
+        private File dataFile;
 
-    @Override
-    protected String getOutputDirectory() {
-        return outputDirectory.getAbsolutePath();
-    }
-
-    @Override
-    public void setReportOutputDirectory(final File reportOutputDirectory) {
-        if (reportOutputDirectory != null
-                && !reportOutputDirectory.getAbsolutePath().endsWith("jacoco")) {
-            outputDirectory = new File(reportOutputDirectory, "jacoco");
-        } else {
-            outputDirectory = reportOutputDirectory;
+        @Override
+        protected String getOutputDirectory() {
+                return outputDirectory.getAbsolutePath();
         }
-    }
 
-    @Override
-    File getDataFile() {
-        return dataFile;
-    }
+        @Override
+        public void setReportOutputDirectory(final File reportOutputDirectory) {
+                if (reportOutputDirectory != null
+                                && !reportOutputDirectory.getAbsolutePath().endsWith("jacoco")) {
+                        outputDirectory = new File(reportOutputDirectory, "jacoco");
+                } else {
+                        outputDirectory = reportOutputDirectory;
+                }
+        }
 
-    @Override
-    File getOutputDirectoryFile() {
-        return outputDirectory;
-    }
+        @Override
+        File getDataFile() {
+                return dataFile;
+        }
 
-    @Override
-    public String getOutputName() {
-        return "jacoco/index";
-    }
+        @Override
+        File getOutputDirectoryFile() {
+                return outputDirectory;
+        }
 
-    @Override
-    public String getName(final Locale locale) {
-        return "JaCoCo Test";
-    }
+        @Override
+        public String getOutputName() {
+                return "jacoco/index";
+        }
+
+        @Override
+        public String getName(final Locale locale) {
+                return "JaCoCo Test";
+        }
 }

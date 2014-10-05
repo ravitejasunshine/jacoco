@@ -92,7 +92,7 @@ public class ReportAggregateMojo extends ReportMojo {
             throws MavenReportException {
 
         concatenateExecFiles();
-        setDataFile(destFile);
+        //setDataFile(destFile);
 
         List<String> classFolders = getClassFolders();
         if (classFolders == null) {
