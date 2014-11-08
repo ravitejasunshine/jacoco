@@ -216,7 +216,7 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
                                 this.getExcludes());
                 final BundleCreator creator = new BundleCreator(this.getProject(),
                                 fileFilter, getLog());
-                final IBundleCoverage bundle = creator.createBundle(executionDataStore);
+                final IBundleCoverage bundle = creator.createBundle(executionDataStore, null);
                 final SourceFileCollection locator = new SourceFileCollection(
                                 getCompileSourceRoots(), sourceEncoding);
                 checkForMissingDebugInformation(bundle);
