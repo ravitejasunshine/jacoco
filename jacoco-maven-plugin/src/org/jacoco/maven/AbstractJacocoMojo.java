@@ -58,26 +58,13 @@ public abstract class AbstractJacocoMojo extends AbstractMojo {
 
 	public final void execute() throws MojoExecutionException,
 			MojoFailureException {
-		if (skip || projectIsPomOnly()) {
+		if (skip) {
 			getLog().info(
-					"Skipping JaCoCo for project with packaging type 'pom' or because property jacoco.skip is set.");
+					"Skipping JaCoCo because property jacoco.skip is set.");
 			skipMojo();
 			return;
 		}
 		executeMojo();
-	}
-
-	private boolean projectIsPomOnly() {
-		return (!goalCanExecuteOnPom() && "pom".equals(project.getPackaging()));
-	}
-
-	/**
-	 * Allows concrete goal to choose to execute on pom packaging types
-	 * 
-	 * @return if this goal can execute on pom package types
-	 */
-	protected boolean goalCanExecuteOnPom() {
-		return false;
 	}
 
 	/**

@@ -9,7 +9,7 @@
  *    Evgeny Mandrikov - initial API and implementation
  *    Kyle Lieber - implementation of CheckMojo
  *    Marc Hoffmann - redesign using report APIs
- *    
+ *
  *******************************************************************************/
 package org.jacoco.maven;
 
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.ICoverageNode;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -32,7 +31,7 @@ import org.jacoco.report.check.RulesChecker;
 
 /**
  * Checks that the code coverage metrics are being met.
- * 
+ *
  * @goal check
  * @phase verify
  * @requiresProject true
@@ -41,196 +40,176 @@ import org.jacoco.report.check.RulesChecker;
  */
 public class CheckMojo extends AbstractJacocoMojo implements IViolationsOutput {
 
-	private static final String MSG_SKIPPING = "Skipping JaCoCo execution due to missing execution data file:";
-	private static final String CHECK_SUCCESS = "All coverage checks have been met.";
-	private static final String CHECK_FAILED = "Coverage checks have not been met. See log for details.";
+    private static final String MSG_SKIPPING = "Skipping JaCoCo execution due to missing execution data file:";
+    private static final String CHECK_SUCCESS = "All coverage checks have been met.";
+    private static final String CHECK_FAILED = "Coverage checks have not been met. See log for details.";
 
-	/**
-	 * <p>
-	 * Check configuration used to specify rules on element types (BUNDLE,
-	 * PACKAGE, CLASS, SOURCEFILE or METHOD) with a list of limits. Each limit
-	 * applies to a certain counter (INSTRUCTION, LINE, BRANCH, COMPLEXITY,
-	 * METHOD, CLASS) and defines a minimum or maximum for the corresponding
-	 * value (TOTALCOUNT, COVEREDCOUNT, MISSEDCOUNT, COVEREDRATIO, MISSEDRATIO).
-	 * If a limit refers to a ratio the range is from 0.0 to 1.0 where the
-	 * number of decimal places will also determine the precision in error
-	 * messages.
-	 * 
-	 * Note that you <b>must</b> use <tt>implementation</tt> hints for
-	 * <tt>rule</tt> and <tt>limit</tt> when using Maven 2, with Maven 3 you do
-	 * not need to specify the attributes.
-	 * </p>
-	 * 
-	 * <p>
-	 * This example requires an overall instruction coverage of 80% and no class
-	 * must be missed:
-	 * </p>
-	 * 
-	 * <pre>
-	 * {@code
-	 * <rules>
-	 *   <rule implementation="org.jacoco.maven.RuleConfiguration">
-	 *     <element>BUNDLE</element>
-	 *     <limits>
-	 *       <limit implementation="org.jacoco.report.check.Limit">
-	 *         <counter>INSTRUCTION</counter>
-	 *         <value>COVEREDRATIO</value>
-	 *         <minimum>0.80</minimum>
-	 *       </limit>
-	 *       <limit implementation="org.jacoco.report.check.Limit">
-	 *         <counter>CLASS</counter>
-	 *         <value>MISSEDCOUNT</value>
-	 *         <maximum>0</maximum>
-	 *       </limit>
-	 *     </limits>
-	 *   </rule>
-	 * </rules>}
-	 * </pre>
-	 * 
-	 * <p>
-	 * This example requires a line coverage minimum of 50% for every class
-	 * except test classes:
-	 * </p>
-	 * 
-	 * <pre>
-	 * {@code
-	 * <rules>
-	 *   <rule>
-	 *     <element>CLASS</element>
-	 *     <excludes>
-	 *       <exclude>*Test</exclude>
-	 *     </excludes>
-	 *     <limits>
-	 *       <limit>
-	 *         <counter>LINE</counter>
-	 *         <value>COVEREDRATIO</value>
-	 *         <minimum>0.50</minimum>
-	 *       </limit>
-	 *     </limits>
-	 *   </rule>
-	 * </rules>}
-	 * </pre>
-	 * 
-	 * @parameter
-	 * @required
-	 */
-	private List<RuleConfiguration> rules;
+    /**
+     * <p>
+     * Check configuration used to specify rules on element types (BUNDLE,
+     * PACKAGE, CLASS, SOURCEFILE or METHOD) with a list of limits. Each limit
+     * applies to a certain counter (INSTRUCTION, LINE, BRANCH, COMPLEXITY,
+     * METHOD, CLASS) and defines a minimum or maximum for the corresponding
+     * value (TOTALCOUNT, COVEREDCOUNT, MISSEDCOUNT, COVEREDRATIO, MISSEDRATIO).
+     * If a limit refers to a ratio the range is from 0.0 to 1.0 where the
+     * number of decimal places will also determine the precision in error
+     * messages.
+     *
+     * Note that you <b>must</b> use <tt>implementation</tt> hints for
+     * <tt>rule</tt> and <tt>limit</tt> when using Maven 2, with Maven 3 you do
+     * not need to specify the attributes.
+     * </p>
+     *
+     * <p>
+     * This example requires an overall instruction coverage of 80% and no class
+     * must be missed:
+     * </p>
+     *
+     * <pre>
+     * {@code
+     * <rules>
+     *   <rule implementation="org.jacoco.maven.RuleConfiguration">
+     *     <element>BUNDLE</element>
+     *     <limits>
+     *       <limit implementation="org.jacoco.report.check.Limit">
+     *         <counter>INSTRUCTION</counter>
+     *         <value>COVEREDRATIO</value>
+     *         <minimum>0.80</minimum>
+     *       </limit>
+     *       <limit implementation="org.jacoco.report.check.Limit">
+     *         <counter>CLASS</counter>
+     *         <value>MISSEDCOUNT</value>
+     *         <maximum>0</maximum>
+     *       </limit>
+     *     </limits>
+     *   </rule>
+     * </rules>}
+     * </pre>
+     *
+     * <p>
+     * This example requires a line coverage minimum of 50% for every class
+     * except test classes:
+     * </p>
+     *
+     * <pre>
+     * {@code
+     * <rules>
+     *   <rule>
+     *     <element>CLASS</element>
+     *     <excludes>
+     *       <exclude>*Test</exclude>
+     *     </excludes>
+     *     <limits>
+     *       <limit>
+     *         <counter>LINE</counter>
+     *         <value>COVEREDRATIO</value>
+     *         <minimum>0.50</minimum>
+     *       </limit>
+     *     </limits>
+     *   </rule>
+     * </rules>}
+     * </pre>
+     *
+     * @parameter
+     * @required
+     */
+    private List<RuleConfiguration> rules;
 
-	/**
-	 * Halt the build if any of the checks fail.
-	 * 
-	 * @parameter property="jacoco.haltOnFailure" default-value="true"
-	 * @required
-	 */
-	private boolean haltOnFailure;
+    /**
+     * Halt the build if any of the checks fail.
+     *
+     * @parameter property="jacoco.haltOnFailure" default-value="true"
+     * @required
+     */
+    private boolean haltOnFailure;
 
-	/**
-	 * File with execution data.
-	 * 
-	 * @parameter default-value="${project.build.directory}/jacoco.exec"
-	 */
-	private File dataFile;
+    /**
+     * File with execution data.
+     *
+     * @parameter default-value="${project.build.directory}/jacoco.exec"
+     */
+    private File dataFile;
 
-	private boolean violations;
+    private boolean violations;
 
-	/**
-	 * The projects in the reactor.
-	 * 
-	 * @parameter expression="${reactorProjects}"
-	 * @readonly
-	 */
-	private List<MavenProject> reactorProjects;
+    private boolean canCheckCoverage() {
+        if (!dataFile.exists()) {
+            getLog().info(MSG_SKIPPING + dataFile);
+            return false;
+        }
+        final File classesDirectory = new File(getProject().getBuild()
+                .getOutputDirectory());
+        if (!classesDirectory.exists()) {
+            getLog().info(
+                    "Skipping JaCoCo execution due to missing classes directory:"
+                            + classesDirectory);
+            return false;
+        }
+        return true;
+    }
 
-	private boolean canCheckCoverage() {
-		if (!dataFile.exists()) {
-			getLog().info(MSG_SKIPPING + dataFile);
-			return false;
-		}
-		final File classesDirectory = new File(getProject().getBuild()
-				.getOutputDirectory());
-		if (!classesDirectory.exists()) {
-			getLog().info(
-					"Skipping JaCoCo execution due to missing classes directory:"
-							+ classesDirectory);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public void executeMojo() throws MojoExecutionException,
+            MojoExecutionException {
+        if (!canCheckCoverage()) {
+            return;
+        }
+        executeCheck();
+    }
 
-	@Override
-	public void executeMojo() throws MojoExecutionException,
-			MojoExecutionException {
-		if (!canCheckCoverage()) {
-			return;
-		}
-		executeCheck();
-	}
+    private void executeCheck() throws MojoExecutionException {
+        final IBundleCoverage bundle = loadBundle();
+        violations = false;
 
-	private void executeCheck() throws MojoExecutionException {
-		final IBundleCoverage bundle = loadBundle();
-		violations = false;
+        final RulesChecker checker = new RulesChecker();
+        final List<Rule> checkerrules = new ArrayList<Rule>();
+        for (final RuleConfiguration r : rules) {
+            checkerrules.add(r.rule);
+        }
+        checker.setRules(checkerrules);
 
-		final RulesChecker checker = new RulesChecker();
-		final List<Rule> checkerrules = new ArrayList<Rule>();
-		for (final RuleConfiguration r : rules) {
-			checkerrules.add(r.rule);
-		}
-		checker.setRules(checkerrules);
+        final IReportVisitor visitor = checker.createVisitor(this);
+        try {
+            visitor.visitBundle(bundle, null);
+        } catch (final IOException e) {
+            throw new MojoExecutionException(
+                    "Error while checking code coverage: " + e.getMessage(), e);
+        }
+        if (violations) {
+            if (this.haltOnFailure) {
+                throw new MojoExecutionException(CHECK_FAILED);
+            } else {
+                this.getLog().warn(CHECK_FAILED);
+            }
+        } else {
+            this.getLog().info(CHECK_SUCCESS);
+        }
+    }
 
-		final IReportVisitor visitor = checker.createVisitor(this);
-		try {
-			visitor.visitBundle(bundle, null);
-		} catch (final IOException e) {
-			throw new MojoExecutionException(
-					"Error while checking code coverage: " + e.getMessage(), e);
-		}
-		if (violations) {
-			if (this.haltOnFailure) {
-				throw new MojoExecutionException(CHECK_FAILED);
-			} else {
-				this.getLog().warn(CHECK_FAILED);
-			}
-		} else {
-			this.getLog().info(CHECK_SUCCESS);
-		}
-	}
+    private IBundleCoverage loadBundle() throws MojoExecutionException {
+        final FileFilter fileFilter = new FileFilter(this.getIncludes(),
+                this.getExcludes());
+        final BundleCreator creator = new BundleCreator(getProject(),
+                fileFilter, getLog());
+        try {
+            final ExecutionDataStore executionData = loadExecutionData();
+            return creator.createBundle(executionData);
+        } catch (final IOException e) {
+            throw new MojoExecutionException(
+                    "Error while reading code coverage: " + e.getMessage(), e);
+        }
+    }
 
-	private IBundleCoverage loadBundle() throws MojoExecutionException {
-		final FileFilter fileFilter = new FileFilter(this.getIncludes(),
-				this.getExcludes());
-		final BundleCreator creator = new BundleCreator(getProject(),
-				fileFilter, getLog());
-		try {
-			final ExecutionDataStore executionData = loadExecutionData();
-			final List<File> classDirs = new ArrayList<File>();
-			for (final MavenProject reactor : reactorProjects) {
-				if (reactor != getProject()) {
-					final File classDir = new File(reactor.getBuild()
-							.getOutputDirectory());
-					classDirs.add(classDir);
-				}
-			}
-			return creator.createBundle(executionData, classDirs);
-		} catch (final IOException e) {
-			throw new MojoExecutionException(
-					"Error while reading code coverage: " + e.getMessage(), e);
-		}
-	}
+    private ExecutionDataStore loadExecutionData() throws IOException {
+        final ExecFileLoader loader = new ExecFileLoader();
+        loader.load(dataFile);
+        return loader.getExecutionDataStore();
+    }
 
-	private ExecutionDataStore loadExecutionData() throws IOException {
-		final ExecFileLoader loader = new ExecFileLoader();
-		loader.load(dataFile);
-		return loader.getExecutionDataStore();
-	}
+    public void onViolation(final ICoverageNode node, final Rule rule,
+                            final Limit limit, final String message) {
+        this.getLog().warn(message);
+        violations = true;
+    }
 
-	public void onViolation(final ICoverageNode node, final Rule rule,
-			final Limit limit, final String message) {
-		this.getLog().warn(message);
-		violations = true;
-	}
-
-	@Override
-	protected boolean goalCanExecuteOnPom() {
-		return true;
-	}
 }
