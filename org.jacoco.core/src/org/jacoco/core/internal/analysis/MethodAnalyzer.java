@@ -26,7 +26,7 @@ import org.objectweb.asm.Label;
 
 /**
  * A {@link MethodProbesVisitor} that analyzes which statements and branches of
- * a method has been executed based on given probe data.
+ * a method have been executed based on given probe data.
  */
 public class MethodAnalyzer extends MethodProbesVisitor {
 
@@ -61,7 +61,7 @@ public class MethodAnalyzer extends MethodProbesVisitor {
 	 * @param name
 	 *            method name
 	 * @param desc
-	 *            description of the method
+	 *            method descriptor
 	 * @param signature
 	 *            optional parameterized signature
 	 * 
